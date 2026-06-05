@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "api/**/*.py": {
+      "runtime": "python@3.9",
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" }
+  ]
+}

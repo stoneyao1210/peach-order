@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>无锡阳山水蜜桃 · 订购</title>
+<style>
+/*
+ * ============================================
+ * 全局样式 — 桃子主题配色
+ * ============================================
+ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: linear-gradient(180deg, #fef3e9 0%, #fde1d3 50%, #f8c8b8 100%);
+  min-height: 100vh;
+  color: #4a3728;
+}
+.container { max-width: 500px; margin: 0 auto; padding: 0 0 40px 0; }
+
+/*
+ * ============================================
+ * 页面头部
+ * ============================================
+ */
+.header {
+  background: linear-gradient(135deg, #ff8c69, #ff6b4a);
+  padding: 28px 20px 24px;
+  text-align: center;
+  border-radius: 0 0 32px 32px;
+  box-shadow: 0 4px 20px rgba(255,107,74,0.3);
+}
+.header .emoji { font-size: 48px; margin-bottom: 6px; }
+.header h1 { font-size: 26px; color: #fff; font-weight: 700; letter-spacing: 2px; }
+.header .subtitle {
+  font-size: 14px; color: rgba(255,255,255,0.85);
+  margin-top: 4px; letter-spacing: 1px;
+}
+
+/*
+ * ============================================
+ * 步骤卡片
+ * ============================================
+ */
+.card {
+  background: #fff;
+  margin: 16px 16px 0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.card-title {
+  font-size: 17px; font-weight: 700; color: #ff6b4a;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+}
+.card-title .step {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; background: #ff6b4a; color: #fff;
+  border-radius: 50%; font-size: 13px; font-weight: 700; flex-shrink: 0;
+}
+
+/*
+ * ============================================
+ * 规格选择卡片
+ * ============================================
+ */
+.spec-list { display: flex; flex-direction: column; gap: 10px; }
+.spec-item {
+  display: flex; align-items: center; padding: 14px 16px;
+  border: 2px solid #f0e0d5; border-radius: 12px;
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.spec-item:hover { border-color: #ffb89a; background: #fff8f4; }
+.spec-item.active { border-color: #ff6b4a; background: #fff3ed; box-shadow: 0 2px 8px rgba(255,107,74,0.15); }
+.spec-item .radio {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ccc;
+  margin-right: 12px; flex-shrink: 0; position: relative; transition: all 0.2s;
+}
+.spec-item.active .radio {
+  border-color: #ff6b4a; background: #ff6b4a;
+  box-shadow: inset 0 0 0 4px #fff;
+}
+.spec-info { flex: 1; }
+.spec-info .name { font-size: 16px; font-weight: 600; color: #4a3728; }
+.spec-info .desc { font-size: 13px; color: #999; margin-top: 2px; }
+.spec-price { font-size: 20px; font-weight: 700; color: #ff6b4a; }
+.spec-price small { font-size: 13px; font-weight: 400; color: #999; }
+
+/*
+ * ============================================
+ * 数量选择
+ * ============================================
+ */
+.qty-group {
+  display: flex; align-items: center; justify-content: center; gap: 0;
+  margin-top: 10px;
+}
+.qty-btn {
+  width: 44px; height: 44px; border: 2px solid #f0e0d5; background: #fff;
+  border-radius: 12px; font-size: 22px; color: #ff6b4a; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; user-select: none;
+}
+.qty-btn:hover { background: #fff3ed; }
+.qty-btn:active { transform: scale(0.95); }
+.qty-value {
+  width: 80px; text-align: center; font-size: 28px; font-weight: 700;
+  color: #4a3728; border: none; background: transparent; pointer-events: none;
+}
+
+/*
+ * ============================================
+ * 地址输入
+ * ============================================
+ */
+.input-group { margin-bottom: 14px; }
+.input-group label {
+  display: block; font-size: 14px; color: #8b7355; margin-bottom: 6px;
+  font-weight: 500;
+}
+.input-group input, .input-group select {
+  width: 100%; height: 44px; border: 2px solid #f0e0d5; border-radius: 10px;
+  padding: 0 14px; font-size: 15px; color: #4a3728; background: #fafafa;
+  transition: border-color 0.2s; outline: none;
+  -webkit-appearance: none; appearance: none;
+}
+.input-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+  padding-right: 36px;
+}
+.input-group input:focus, .input-group select:focus { border-color: #ff6b4a; background: #fff; }
+.input-row { display: flex; gap: 10px; }
+.input-row .input-group { flex: 1; }
+
+/*
+ * ============================================
+ * 费用明细
+ * ============================================
+ */
+.fee-table { width: 100%; border-collapse: collapse; }
+.fee-table td {
+  padding: 10px 0; font-size: 15px; color: #8b7355;
+}
+.fee-table td:last-child { text-align: right; color: #4a3728; font-weight: 500; }
+.fee-table .total-row td {
+  border-top: 2px dashed #f0e0d5; padding-top: 14px;
+  font-size: 18px; font-weight: 700; color: #ff6b4a;
+}
+
+/*
+ * ============================================
+ * 支付方式
+ * ============================================
+ */
+.pay-section { text-align: center; }
+.pay-step { margin-bottom: 16px; }
+.pay-step .label {
+  display: inline-block; background: #4a3728; color: #fff;
+  padding: 4px 14px; border-radius: 14px; font-size: 13px; margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+.qr-container {
+  display: flex; justify-content: center; align-items: center; gap: 20px;
+  flex-wrap: wrap;
+}
+.qr-card {
+  text-align: center; padding: 12px; border: 2px dashed #f0e0d5;
+  border-radius: 12px;
+}
+.qr-card p { font-size: 13px; color: #999; margin-bottom: 6px; }
+.qr-card img {
+  width: 140px; height: 140px; border-radius: 8px; object-fit: contain;
+}
+
+/*
+ * ============================================
+ * 提交按钮
+ * ============================================
+ */
+.submit-btn {
+  width: 100%; height: 50px; background: linear-gradient(135deg, #ff8c69, #ff6b4a);
+  color: #fff; border: none; border-radius: 25px; font-size: 18px;
+  font-weight: 700; cursor: pointer; letter-spacing: 2px;
+  box-shadow: 0 4px 16px rgba(255,107,74,0.4); transition: all 0.2s;
+  margin-top: 6px;
+}
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,74,0.5); }
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/*
+ * ============================================
+ * 成功提示弹窗
+ * ============================================
+ */
+.toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+  background: #4a3728; color: #fff; padding: 12px 28px; border-radius: 24px;
+  font-size: 15px; font-weight: 600; z-index: 999;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2); transition: all 0.3s;
+  opacity: 0; pointer-events: none;
+}
+.toast.show { opacity: 1; top: 40px; }
+
+/*
+ * ============================================
+ * 底部
+ * ============================================
+ */
+.footer {
+  text-align: center; padding: 20px; color: #bfa99a; font-size: 12px; letter-spacing: 1px;
+}
+
+/*
+ * ============================================
+ * 价格配置标记（管理员可修改区域）
+ * 修改价格时，只需编辑下面 <script id="config"> 中的 JSON
+ * ============================================
+ */
+</style>
+</head>
+<body>
+
+<script id="config" type="application/json">
+{
+  "specs": [
+    { "name": "12个装", "weight": "约5斤", "price": 80, "cost": 50 },
+    { "name": "8个装", "weight": "约5斤", "price": 100, "cost": 60 },
+    { "name": "6个装", "weight": "约5斤", "price": 120, "cost": 70 }
+  ],
+  "shop": {
+    "name": "阳山水蜜桃·果农直发",
+    "wechat": "楚聆爸",
+    "region": "江苏无锡阳山",
+    "notice": "果园现采现发，一般1-2天内发货，订单量大时会顺延。江浙沪皖一般次日上午到达，其他省份2-3天内。全程顺丰冷链物流，保证新鲜。有坏果请拍照联系我们，按比例退款。",
+    "qrImage": "./qr.jpg"
+  },
+  "shipping": {
+    "groups": [
+      { "provinces": ["上海","江苏","浙江"],                     "oneBox": 26,  "twoBox": 32  },
+      { "provinces": ["安徽"],                                   "oneBox": 28,  "twoBox": 34  },
+      { "provinces": ["江西","湖北","河南"],                      "oneBox": 50,  "twoBox": 74  },
+      { "provinces": ["山东","福建"],                             "oneBox": 54,  "twoBox": 84  },
+      { "provinces": ["北京","天津","河北","湖南","山西","陕西"],    "oneBox": 55,  "twoBox": 85  },
+      { "provinces": ["广东","重庆","四川","广西","宁夏","辽宁","贵州","甘肃","内蒙古"], "oneBox": 61, "twoBox": 100 },
+      { "provinces": ["云南","青海","海南"],                      "oneBox": 63,  "twoBox": 105 },
+      { "provinces": ["黑龙江","吉林"],                            "oneBox": 71,  "twoBox": 125 },
+      { "provinces": ["西藏","新疆"],                             "oneBox": 80,  "twoBox": 143 }
+    ]
+  }
+}
+</script>
+
+<div class="container">
+
+  <!-- ========== 头部 ========== -->
+  <div class="header">
+    <div class="emoji">🍑</div>
+    <h1>无锡阳山水蜜桃</h1>
+    <div class="subtitle">湖景蜜露 · 果园直发 · 现摘现寄</div>
+  </div>
+
+  <!-- ========== 步骤1：选择规格 ========== -->
+  <div class="card">
+    <div class="card-title"><span class="step">1</span> 选择规格</div>
+    <div class="spec-list" id="specList"></div>
+  </div>
+
+  <!-- ========== 步骤2：选择数量 ========== -->
+  <div class="card">
+    <div class="card-title"><span class="step">2</span> 购买数量</div>
+    <div class="qty-group">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <input class="qty-value" id="qtyInput" value="1" readonly>
+      <button class="qty-btn" onclick="changeQty(1)">+</button>
+    </div>
+    <div style="text-align:center;font-size:13px;color:#bfa99a;margin-top:8px;">单位：箱</div>
+  </div>
+
+  <!-- ========== 步骤3：收货地址 ========== -->
+  <div class="card">
+    <div class="card-title"><span class="step">3</span> 收货信息</div>
+    <div class="input-group">
+      <label>收件人姓名 *</label>
+      <input type="text" id="name" placeholder="请填写收件人姓名" autocomplete="name">
+    </div>
+    <div class="input-group">
+      <label>手机号码 *</label>
+      <input type="tel" id="phone" placeholder="请输入手机号" autocomplete="tel">
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>省份 *</label>
+        <select id="province" onchange="updateShipping()">
+          <option value="">请选择省份</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>城市</label>
+        <input type="text" id="city" placeholder="市/区" autocomplete="address-level2">
+      </div>
+    </div>
+    <div class="input-group">
+      <label>详细地址 *</label>
+      <input type="text" id="address" placeholder="街道/小区/门牌号" autocomplete="street-address">
+    </div>
+  </div>
+
+  <!-- ========== 费用明细 ========== -->
+  <div class="card" id="feeCard">
+    <div class="card-title" style="color:#4a3728;">💰 费用明细</div>
+    <table class="fee-table">
+      <tr>
+        <td id="feeSpec">—</td>
+        <td id="feePeach">¥0</td>
+      </tr>
+      <tr>
+        <td>邮费</td>
+        <td id="feeShipping">¥0</td>
+      </tr>
+      <tr>
+        <td>快递单数（≤2箱/单）</td>
+        <td id="feePackages">0单</td>
+      </tr>
+      <tr class="total-row">
+        <td>合计应付</td>
+        <td id="feeTotal">¥0</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ========== 步骤4：付款 ========== -->
+  <div class="card pay-section">
+    <div class="card-title"><span class="step">4</span> 添加微信付款</div>
+
+    <div class="pay-step">
+      <div class="label">STEP ① 长按或截图识别二维码</div>
+      <div class="qr-container">
+        <div class="qr-card">
+          <img id="qrImage" src="./qr.jpg" alt="微信二维码">
+          <p style="margin-top:6px;color:#4a3728;font-weight:600;">微信：<span id="shopWechat"></span></p>
+          <p style="font-size:12px;color:#bfa99a;">🍑 添加好友后付款</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pay-step">
+      <div class="label">STEP ② 转账时备注收件人姓名</div>
+    </div>
+
+    <div class="pay-step">
+      <div class="label">STEP ③ 确认并提交</div>
+    </div>
+
+    <label style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;font-size:14px;color:#8b7355;cursor:pointer;">
+      <input type="checkbox" id="agreePayment" onchange="checkForm()" style="width:18px;height:18px;accent-color:#ff6b4a;">
+      我已添加微信好友并完成付款
+    </label>
+
+    <button class="submit-btn" id="submitBtn" disabled onclick="submitOrder()">确认提交订单</button>
+
+    <p style="font-size:12px;color:#bfa99a;margin-top:12px;line-height:1.6;" id="shopNotice"></p>
+  </div>
+
+  <div class="footer">🍑 无锡阳山 · 湖景蜜露 · 甜蜜一夏 🍑</div>
+</div>
+
+<!-- 提交成功提示 -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================
+// 加载配置
+// ============================================
+const configText = document.getElementById('config').textContent;
+const CONFIG = JSON.parse(configText);
+
+let selectedSpec = null;
+let quantity = 1;
+let currentOneBox = 0;
+let currentTwoBox = 0;
+
+// ============================================
+// 初始化所有省份
+// ============================================
+const allProvinces = [
+  "北京","天津","上海","重庆",
+  "河北","山西","辽宁","吉林","黑龙江",
+  "江苏","浙江","安徽","福建","江西","山东",
+  "河南","湖北","湖南","广东","海南",
+  "四川","贵州","云南","陕西","甘肃","青海",
+  "广西","宁夏","内蒙古","西藏","新疆"
+];
+
+// 构建省份→邮费映射
+const provinceMap = {};
+const provinceList = [];
+CONFIG.shipping.groups.forEach(g => {
+  g.provinces.forEach(p => {
+    provinceMap[p] = { oneBox: g.oneBox, twoBox: g.twoBox };
+    provinceList.push(p);
+  });
+});
+
+// 填充省份下拉
+const provinceSelect = document.getElementById('province');
+allProvinces.forEach(p => {
+  if (provinceMap[p]) {
+    const opt = document.createElement('option');
+    opt.value = p;
+    opt.textContent = p;
+    provinceSelect.appendChild(opt);
+  } else {
+    const opt = document.createElement('option');
+    opt.value = p;
+    opt.textContent = p + '（暂不发货）';
+    opt.disabled = true;
+    opt.style.color = '#ccc';
+    provinceSelect.appendChild(opt);
+  }
+});
+
+// ============================================
+// 渲染规格列表
+// ============================================
+const specList = document.getElementById('specList');
+CONFIG.specs.forEach((spec, i) => {
+  const div = document.createElement('div');
+  div.className = 'spec-item';
+  div.onclick = () => selectSpec(i);
+  div.innerHTML = `
+    <div class="radio"></div>
+    <div class="spec-info">
+      <div class="name">${spec.name}</div>
+      <div class="desc">${spec.weight}</div>
+    </div>
+    <div class="spec-price">¥${spec.price} <small>/箱</small></div>
+  `;
+  specList.appendChild(div);
+});
+
+// ============================================
+// 交互逻辑
+// ============================================
+function selectSpec(index) {
+  selectedSpec = CONFIG.specs[index];
+  document.querySelectorAll('.spec-item').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
+  });
+  updateSummary();
+  checkForm();
+}
+
+function changeQty(delta) {
+  quantity = Math.max(1, Math.min(99, quantity + delta));
+  document.getElementById('qtyInput').value = quantity;
+  updateSummary();
+  checkForm();
+}
+
+function updateShipping() {
+  updateSummary();
+  checkForm();
+}
+
+// ============================================
+// 邮费计算：按2箱一单分配
+// ============================================
+function calcShipping(province, totalBoxes) {
+  if (!province || !provinceMap[province]) return { shipping: 0, packages: 0, unavailable: true };
+
+  const { oneBox, twoBox } = provinceMap[province];
+  const twoPackages = Math.floor(totalBoxes / 2);
+  const onePackage = totalBoxes % 2;
+  const shipping = twoPackages * twoBox + onePackage * oneBox;
+  const pkgCount = twoPackages + onePackage;
+
+  return { shipping, packages: pkgCount, oneBox, twoBox, unavailable: false };
+}
+
+// ============================================
+// 更新费用展示
+// ============================================
+function updateSummary() {
+  const province = provinceSelect.value;
+  const peachTotal = selectedSpec ? selectedSpec.price * quantity : 0;
+
+  let shippingResult = { shipping: 0, packages: 0, unavailable: !province };
+
+  if (province && provinceMap[province] && quantity > 0) {
+    shippingResult = calcShipping(province, quantity);
+  }
+
+  const grandTotal = peachTotal + shippingResult.shipping;
+
+  document.getElementById('feeSpec').textContent =
+    selectedSpec ? `${selectedSpec.name} × ${quantity}箱 (¥${selectedSpec.price}/箱)` : '请先选择规格';
+  document.getElementById('feePeach').textContent = `¥${peachTotal}`;
+  document.getElementById('feeShipping').textContent =
+    province ? (shippingResult.unavailable ? '暂不发货' : `¥${shippingResult.shipping}`) : '请选择省份';
+  document.getElementById('feePackages').textContent =
+    province ? (shippingResult.unavailable ? '—' : `${shippingResult.packages}单`) : '—';
+  document.getElementById('feeTotal').textContent = `¥${grandTotal}`;
+}
+
+// ============================================
+// 表单校验
+// ============================================
+function checkForm() {
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const province = provinceSelect.value;
+  const address = document.getElementById('address').value.trim();
+  const agreed = document.getElementById('agreePayment').checked;
+
+  const valid = selectedSpec && quantity > 0 && name && phone && province &&
+    provinceMap[province] && address && agreed;
+
+  document.getElementById('submitBtn').disabled = !valid;
+}
+
+// 绑定校验事件
+['name','phone','address'].forEach(id => {
+  document.getElementById(id).addEventListener('input', checkForm);
+});
+
+// ============================================
+// 提交订单
+// ============================================
+async function submitOrder() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '提交中...';
+
+  const province = provinceSelect.value;
+  const shippingResult = calcShipping(province, quantity);
+  const peachTotal = selectedSpec.price * quantity;
+  const grandTotal = peachTotal + shippingResult.shipping;
+
+  const order = {
+    time: new Date().toLocaleString('zh-CN'),
+    timestamp: Date.now(),
+    spec: selectedSpec.name,
+    pricePerBox: selectedSpec.price,
+    quantity: quantity,
+    peachTotal: peachTotal,
+    province: province,
+    city: document.getElementById('city').value.trim(),
+    address: document.getElementById('address').value.trim(),
+    shipping: shippingResult.shipping,
+    packages: shippingResult.packages,
+    total: grandTotal,
+    name: document.getElementById('name').value.trim(),
+    phone: document.getElementById('phone').value.trim()
+  };
+
+  try {
+    // 提交到后端
+    const resp = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order)
+    });
+
+    if (!resp.ok) throw new Error('服务器响应异常');
+
+    showToast('✅ 订单提交成功！请确认已微信付款～');
+    btn.textContent = '提交成功 ✓';
+
+    // 3秒后恢复按钮
+    setTimeout(() => {
+      btn.textContent = '确认提交订单';
+      btn.disabled = false;
+    }, 3000);
+
+  } catch (err) {
+    // 如果后端不可用，使用 localStorage 兜底
+    saveToLocal(order);
+    showToast('订单已保存（离线模式），请联系确认');
+    btn.textContent = '确认提交订单';
+    btn.disabled = false;
+  }
+}
+
+function saveToLocal(order) {
+  const orders = JSON.parse(localStorage.getItem('peach_orders') || '[]');
+  orders.push(order);
+  localStorage.setItem('peach_orders', JSON.stringify(orders));
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ============================================
+// 页面初始化
+// ============================================
+function init() {
+  document.getElementById('shopWechat').textContent = CONFIG.shop.wechat;
+  document.getElementById('shopNotice').textContent = CONFIG.shop.notice;
+  updateSummary();
+
+  // 监听数量手动输入
+  const qtyInput = document.getElementById('qtyInput');
+  // 由于 readonly，不需要额外处理
+}
+
+init();
+</script>
+
+</body>
+</html>
