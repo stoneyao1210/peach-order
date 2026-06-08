@@ -1,13 +1,16 @@
 {
-  "functions": {
-    "api/orders.py": {
-      "maxDuration": 10
-    },
-    "api/export.py": {
-      "maxDuration": 10
-    }
-  },
-  "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" }
+  "version": 2,
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "admin.html", "use": "@vercel/static" },
+    { "src": "qr.jpg", "use": "@vercel/static" },
+    { "src": "api/orders.py", "use": "@vercel/python" },
+    { "src": "api/export.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/api/orders", "dest": "/api/orders.py" },
+    { "src": "/api/export", "dest": "/api/export.py" },
+    { "src": "/admin", "dest": "/admin.html" },
+    { "src": "/", "dest": "/index.html" }
   ]
 }
