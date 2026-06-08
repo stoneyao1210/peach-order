@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>无锡阳山水蜜桃 · 订购</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing: border-box; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
   background: linear-gradient(180deg, #fef3e9 0%, #fde1d3 50%, #f8c8b8 100%);
@@ -179,15 +179,15 @@ body {
   },
   "shipping": {
     "groups": [
-      { "provinces": ["上海","江苏","浙江"],                     "oneBox": 26,  "twoBox": 32  },
-      { "provinces": ["安徽"],                                   "oneBox": 28,  "twoBox": 34  },
-      { "provinces": ["江西","湖北","河南"],                      "oneBox": 50,  "twoBox": 74  },
-      { "provinces": ["山东","福建"],                             "oneBox": 54,  "twoBox": 84  },
-      { "provinces": ["北京","天津","河北","湖南","山西","陕西"],    "oneBox": 55,  "twoBox": 85  },
+      { "provinces": ["上海","江苏","浙江"], "oneBox": 26, "twoBox": 32 },
+      { "provinces": ["安徽"], "oneBox": 28, "twoBox": 34 },
+      { "provinces": ["江西","湖北","河南"], "oneBox": 50, "twoBox": 74 },
+      { "provinces": ["山东","福建"], "oneBox": 54, "twoBox": 84 },
+      { "provinces": ["北京","天津","河北","湖南","山西","陕西"], "oneBox": 55, "twoBox": 85 },
       { "provinces": ["广东","重庆","四川","广西","宁夏","辽宁","贵州","甘肃","内蒙古"], "oneBox": 61, "twoBox": 100 },
-      { "provinces": ["云南","青海","海南"],                      "oneBox": 63,  "twoBox": 105 },
-      { "provinces": ["黑龙江","吉林"],                            "oneBox": 71,  "twoBox": 125 },
-      { "provinces": ["西藏","新疆"],                             "oneBox": 80,  "twoBox": 143 }
+      { "provinces": ["云南","青海","海南"], "oneBox": 63, "twoBox": 105 },
+      { "provinces": ["黑龙江","吉林"], "oneBox": 71, "twoBox": 125 },
+      { "provinces": ["西藏","新疆"], "oneBox": 80, "twoBox": 143 }
     ]
   }
 }
@@ -376,7 +376,7 @@ function initOrderPage() {
       document.querySelectorAll(".spec-item").forEach((el, j) => el.classList.toggle("active", j === i));
       updateSummary(); checkForm();
     };
-    div.innerHTML = `<div class="radio"></div><div class="spec-info"><div class="name">${spec.name}</div><div class="desc">${spec.weight}</div></div><div class="spec-price">¥${spec.price} <small>/箱</small></div>`;
+    div.innerHTML = '<div class="radio"></div><div class="spec-info"><div class="name">' + spec.name + '</div><div class="desc">' + spec.weight + '</div></div><div class="spec-price">¥' + spec.price + ' <small>/箱</small></div>';
     document.getElementById("specList").appendChild(div);
   });
 
@@ -402,7 +402,7 @@ function updateSummary() {
   const sr = (province && provinceMap[province]) ? calcShipping(province, quantity) : { shipping: 0, packages: 0, unavailable: !province };
   const grandTotal = peachTotal + sr.shipping;
 
-  document.getElementById("feeSpec").textContent = selectedSpec ? `${selectedSpec.name} × ${quantity}箱 (¥${selectedSpec.price}/箱)` : "请先选择规格";
+  document.getElementById("feeSpec").textContent = selectedSpec ? selectedSpec.name + " × " + quantity + "箱 (¥" + selectedSpec.price + "/箱)" : "请先选择规格";
   document.getElementById("feePeach").textContent = "¥" + peachTotal;
   document.getElementById("feeShipping").textContent = province ? (sr.unavailable ? "暂不发货" : "¥" + sr.shipping) : "请选择省份";
   document.getElementById("feePackages").textContent = province ? (sr.unavailable ? "—" : sr.packages + "单") : "—";
@@ -505,37 +505,36 @@ async function loadAdminOrders() {
     document.getElementById("statProfit").textContent = "¥" + profit.toLocaleString();
 
     let html = '<div style="overflow-x:auto;"><table class="admin-table"><thead><tr>';
-    ["编号","时间","规格","数量","桃子¥","省份","邮费","单数","总价","收件人","手机","地址"].forEach(h => {
+    ["编号","时间","规格","数量","桃子¥","邮费","单数","总价","收件人","手机","地址"].forEach(h => {
       html += "<th>" + h + "</th>";
     });
     html += "</tr></thead><tbody>";
 
     orders.forEach(o => {
-      html += `<tr>
-        <td>${o.id || ""}</td>
-        <td>${(o.created_at || "").substring(0,16)}</td>
-        <td>${o.spec || ""}</td>
-        <td>${o.quantity || 0}</td>
-        <td>¥${o.peach_total || 0}</td>
-        <td>${o.province || ""}</td>
-        <td>¥${o.shipping || 0}</td>
-        <td>${o.packages || 0}</td>
-        <td style="color:#ff6b4a;font-weight:700;">¥${o.total || 0}</td>
-        <td>${o.customer_name || ""}</td>
-        <td>${o.customer_phone || ""}</td>
-        <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${o.address || ""}">${o.address || ""}</td>
-      </tr>`;
+      html += '<tr>' +
+        '<td>' + (o.id || "") + '</td>' +
+        '<td>' + (o.created_at || "").substring(0,16) + '</td>' +
+        '<td>' + (o.spec || "") + '</td>' +
+        '<td>' + (o.quantity || 0) + '</td>' +
+        '<td>¥' + (o.peach_total || 0) + '</td>' +
+        '<td>¥' + (o.shipping || 0) + '</td>' +
+        '<td>' + (o.packages || 0) + '</td>' +
+        '<td style="color:#ff6b4a;font-weight:700;">¥' + (o.total || 0) + '</td>' +
+        '<td>' + (o.customer_name || "") + '</td>' +
+        '<td>' + (o.customer_phone || "") + '</td>' +
+        '<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + (o.address || "") + '">' + (o.address || "") + '</td>' +
+        '</tr>';
     });
 
-    html += `<tr class="cost-row">
-      <td colspan="3"><b>合计 ${orders.length}单</b></td>
-      <td><b>${totalBoxes}</b></td>
-      <td><b>¥${totalPeach.toLocaleString()}</b></td>
-      <td></td><td><b>¥${totalShip.toLocaleString()}</b></td>
-      <td></td><td><b>¥${totalRev.toLocaleString()}</b></td>
-      <td colspan="3">预估毛利：¥${profit.toLocaleString()}</td>
-    </tr>`;
-    html += "</tbody></table></div>";
+    html += '<tr class="cost-row">' +
+      '<td colspan="3"><b>合计 ' + orders.length + ' 单</b></td>' +
+      '<td><b>' + totalBoxes + '</b></td>' +
+      '<td><b>¥' + totalPeach.toLocaleString() + '</b></td>' +
+      '<td></td><td><b>¥' + totalShip.toLocaleString() + '</b></td>' +
+      '<td></td><td><b>¥' + totalRev.toLocaleString() + '</b></td>' +
+      '<td colspan="3">预估毛利：¥' + profit.toLocaleString() + '</td>' +
+      '</tr>';
+    html += '</tbody></table></div>';
     document.getElementById("tableContainer").innerHTML = html;
     document.getElementById("updateTime").textContent = "最后更新：" + new Date().toLocaleString("zh-CN");
   } catch (e) {
