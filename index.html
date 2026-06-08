@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>无锡阳山水蜜桃 · 订购</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: linear-gradient(180deg, #fef3e9 0%, #fde1d3 50%, #f8c8b8 100%);
+  min-height: 100vh; color: #4a3728;
+}
+.container { max-width: 500px; margin: 0 auto; padding: 0 0 40px 0; }
+
+/* ===== 头部 ===== */
+.header {
+  background: linear-gradient(135deg, #ff8c69, #ff6b4a);
+  padding: 28px 20px 24px; text-align: center;
+  border-radius: 0 0 32px 32px; box-shadow: 0 4px 20px rgba(255,107,74,0.3);
+}
+.header .emoji { font-size: 48px; margin-bottom: 6px; }
+.header h1 { font-size: 26px; color: #fff; font-weight: 700; letter-spacing: 2px; }
+.header .subtitle { font-size: 14px; color: rgba(255,255,255,0.85); margin-top: 4px; letter-spacing: 1px; }
+
+/* ===== 卡片 ===== */
+.card {
+  background: #fff; margin: 16px 16px 0; border-radius: 16px;
+  padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.card-title {
+  font-size: 17px; font-weight: 700; color: #ff6b4a;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+}
+.card-title .step {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; background: #ff6b4a; color: #fff;
+  border-radius: 50%; font-size: 13px; font-weight: 700; flex-shrink: 0;
+}
+
+/* ===== 规格选择 ===== */
+.spec-list { display: flex; flex-direction: column; gap: 10px; }
+.spec-item {
+  display: flex; align-items: center; padding: 14px 16px;
+  border: 2px solid #f0e0d5; border-radius: 12px;
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.spec-item:hover { border-color: #ffb89a; background: #fff8f4; }
+.spec-item.active { border-color: #ff6b4a; background: #fff3ed; box-shadow: 0 2px 8px rgba(255,107,74,0.15); }
+.spec-item .radio {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ccc;
+  margin-right: 12px; flex-shrink: 0; position: relative; transition: all 0.2s;
+}
+.spec-item.active .radio {
+  border-color: #ff6b4a; background: #ff6b4a; box-shadow: inset 0 0 0 4px #fff;
+}
+.spec-info { flex: 1; }
+.spec-info .name { font-size: 16px; font-weight: 600; color: #4a3728; }
+.spec-info .desc { font-size: 13px; color: #999; margin-top: 2px; }
+.spec-price { font-size: 20px; font-weight: 700; color: #ff6b4a; }
+.spec-price small { font-size: 13px; font-weight: 400; color: #999; }
+
+/* ===== 数量 ===== */
+.qty-group { display: flex; align-items: center; justify-content: center; gap: 0; margin-top: 10px; }
+.qty-btn {
+  width: 44px; height: 44px; border: 2px solid #f0e0d5; background: #fff;
+  border-radius: 12px; font-size: 22px; color: #ff6b4a; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; user-select: none;
+}
+.qty-btn:hover { background: #fff3ed; }
+.qty-btn:active { transform: scale(0.95); }
+.qty-value {
+  width: 80px; text-align: center; font-size: 28px; font-weight: 700;
+  color: #4a3728; border: none; background: transparent; pointer-events: none;
+}
+
+/* ===== 输入 ===== */
+.input-group { margin-bottom: 14px; }
+.input-group label { display: block; font-size: 14px; color: #8b7355; margin-bottom: 6px; font-weight: 500; }
+.input-group input, .input-group select {
+  width: 100%; height: 44px; border: 2px solid #f0e0d5; border-radius: 10px;
+  padding: 0 14px; font-size: 15px; color: #4a3728; background: #fafafa;
+  transition: border-color 0.2s; outline: none; -webkit-appearance: none; appearance: none;
+}
+.input-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+}
+.input-group input:focus, .input-group select:focus { border-color: #ff6b4a; background: #fff; }
+.input-row { display: flex; gap: 10px; }
+.input-row .input-group { flex: 1; }
+
+/* ===== 费用 ===== */
+.fee-table { width: 100%; border-collapse: collapse; }
+.fee-table td { padding: 10px 0; font-size: 15px; color: #8b7355; }
+.fee-table td:last-child { text-align: right; color: #4a3728; font-weight: 500; }
+.fee-table .total-row td { border-top: 2px dashed #f0e0d5; padding-top: 14px; font-size: 18px; font-weight: 700; color: #ff6b4a; }
+
+/* ===== 支付 ===== */
+.pay-section { text-align: center; }
+.pay-step { margin-bottom: 16px; }
+.pay-step .label { display: inline-block; background: #4a3728; color: #fff; padding: 4px 14px; border-radius: 14px; font-size: 13px; margin-bottom: 10px; letter-spacing: 1px; }
+.qr-container { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; }
+.qr-card { text-align: center; padding: 12px; border: 2px dashed #f0e0d5; border-radius: 12px; }
+.qr-card p { font-size: 13px; color: #999; margin-bottom: 6px; }
+.qr-card img { width: 140px; height: 140px; border-radius: 8px; object-fit: contain; }
+
+/* ===== 按钮 ===== */
+.submit-btn {
+  width: 100%; height: 50px; background: linear-gradient(135deg, #ff8c69, #ff6b4a);
+  color: #fff; border: none; border-radius: 25px; font-size: 18px;
+  font-weight: 700; cursor: pointer; letter-spacing: 2px;
+  box-shadow: 0 4px 16px rgba(255,107,74,0.4); transition: all 0.2s; margin-top: 6px;
+}
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,74,0.5); }
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+  background: #4a3728; color: #fff; padding: 12px 28px; border-radius: 24px;
+  font-size: 15px; font-weight: 600; z-index: 999;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2); transition: all 0.3s;
+  opacity: 0; pointer-events: none;
+}
+.toast.show { opacity: 1; top: 40px; }
+
+.footer { text-align: center; padding: 20px; color: #bfa99a; font-size: 12px; letter-spacing: 1px; }
+
+/* ===== 管理后台样式 ===== */
+.admin-body { background: #f5f0eb; }
+.admin-header { background: linear-gradient(135deg,#ff8c69,#ff6b4a); color:#fff; padding:20px; border-radius:14px; margin-bottom:16px; text-align:center; }
+.admin-header h1 { font-size:22px; }
+.admin-header p { font-size:13px; opacity:0.85; margin-top:4px; }
+.stats { display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+.stat-card { flex:1; min-width:100px; background:#fff; padding:14px; border-radius:10px; text-align:center; box-shadow:0 1px 6px rgba(0,0,0,0.05); }
+.stat-card .num { font-size:26px; font-weight:700; color:#ff6b4a; }
+.stat-card .label { font-size:12px; color:#999; margin-top:2px; }
+.actions { display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+.btn { padding:10px 18px; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; display:inline-block; }
+.btn-primary { background:#ff6b4a; color:#fff; }
+.btn-success { background:#27ae60; color:#fff; }
+.btn-outline { background:#fff; color:#ff6b4a; border:2px solid #ff6b4a; }
+.btn:hover { opacity:0.85; }
+.admin-table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.05); font-size:12px; overflow-x:auto; }
+.admin-table th { background:#ff6b4a; color:#fff; padding:10px 6px; text-align:left; white-space:nowrap; }
+.admin-table td { padding:9px 6px; border-bottom:1px solid #f0e0d5; }
+.admin-table tr:hover { background:#fff8f4; }
+.loading { text-align:center; padding:40px; color:#999; }
+.empty { text-align:center; padding:60px; color:#bfa99a; font-size:16px; }
+.cost-row { background:#fff3ed; font-weight:700; }
+.admin-container { max-width:960px; margin:0 auto; padding:16px 16px 40px; }
+
+@media (max-width:600px) {
+  .stat-card { min-width:70px; padding:10px; }
+  .stat-card .num { font-size:20px; }
+  .admin-table th, .admin-table td { font-size:11px; padding:6px 3px; }
+}
+</style>
+</head>
+<body id="mainBody">
+
+<!-- ========== 配置 ========== -->
+<script id="config" type="application/json">
+{
+  "specs": [
+    { "name": "12个装", "weight": "约5斤", "price": 80, "cost": 50 },
+    { "name": "8个装", "weight": "约5斤", "price": 100, "cost": 60 },
+    { "name": "6个装", "weight": "约5斤", "price": 120, "cost": 70 }
+  ],
+  "shop": {
+    "name": "阳山水蜜桃·果农直发",
+    "wechat": "楚聆爸",
+    "region": "江苏无锡阳山",
+    "notice": "果园现采现发，一般1-2天内发货，订单量大时会顺延。江浙沪皖一般次日上午到达，其他省份2-3天内。全程顺丰冷链物流，保证新鲜。有坏果请拍照联系我们，按比例退款。",
+    "qrImage": "./qr.jpg"
+  },
+  "shipping": {
+    "groups": [
+      { "provinces": ["上海","江苏","浙江"],                     "oneBox": 26,  "twoBox": 32  },
+      { "provinces": ["安徽"],                                   "oneBox": 28,  "twoBox": 34  },
+      { "provinces": ["江西","湖北","河南"],                      "oneBox": 50,  "twoBox": 74  },
+      { "provinces": ["山东","福建"],                             "oneBox": 54,  "twoBox": 84  },
+      { "provinces": ["北京","天津","河北","湖南","山西","陕西"],    "oneBox": 55,  "twoBox": 85  },
+      { "provinces": ["广东","重庆","四川","广西","宁夏","辽宁","贵州","甘肃","内蒙古"], "oneBox": 61, "twoBox": 100 },
+      { "provinces": ["云南","青海","海南"],                      "oneBox": 63,  "twoBox": 105 },
+      { "provinces": ["黑龙江","吉林"],                            "oneBox": 71,  "twoBox": 125 },
+      { "provinces": ["西藏","新疆"],                             "oneBox": 80,  "twoBox": 143 }
+    ]
+  }
+}
+</script>
+
+<!-- ========== 客户下单页面 ========== -->
+<div id="orderView">
+<div class="container">
+  <div class="header">
+    <div class="emoji">🍑</div>
+    <h1>无锡阳山水蜜桃</h1>
+    <div class="subtitle">湖景蜜露 · 果园直发 · 现摘现寄</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="step">1</span> 选择规格</div>
+    <div class="spec-list" id="specList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="step">2</span> 购买数量</div>
+    <div class="qty-group">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <input class="qty-value" id="qtyInput" value="1" readonly>
+      <button class="qty-btn" onclick="changeQty(1)">+</button>
+    </div>
+    <div style="text-align:center;font-size:13px;color:#bfa99a;margin-top:8px;">单位：箱</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="step">3</span> 收货信息</div>
+    <div class="input-group"><label>收件人姓名 *</label><input type="text" id="name" placeholder="请填写收件人姓名" autocomplete="name"></div>
+    <div class="input-group"><label>手机号码 *</label><input type="tel" id="phone" placeholder="请输入手机号" autocomplete="tel"></div>
+    <div class="input-row">
+      <div class="input-group"><label>省份 *</label><select id="province" onchange="updateShipping()"><option value="">请选择省份</option></select></div>
+      <div class="input-group"><label>城市</label><input type="text" id="city" placeholder="市/区" autocomplete="address-level2"></div>
+    </div>
+    <div class="input-group"><label>详细地址 *</label><input type="text" id="address" placeholder="街道/小区/门牌号" autocomplete="street-address"></div>
+  </div>
+
+  <div class="card" id="feeCard">
+    <div class="card-title" style="color:#4a3728;">💰 费用明细</div>
+    <table class="fee-table">
+      <tr><td id="feeSpec">—</td><td id="feePeach">¥0</td></tr>
+      <tr><td>邮费</td><td id="feeShipping">¥0</td></tr>
+      <tr><td>快递单数（≤2箱/单）</td><td id="feePackages">0单</td></tr>
+      <tr class="total-row"><td>合计应付</td><td id="feeTotal">¥0</td></tr>
+    </table>
+  </div>
+
+  <div class="card pay-section">
+    <div class="card-title"><span class="step">4</span> 添加微信付款</div>
+    <div class="pay-step"><div class="label">STEP ① 长按或截图识别二维码</div>
+      <div class="qr-container"><div class="qr-card">
+        <img id="qrImage" src="./qr.jpg" alt="微信二维码">
+        <p style="margin-top:6px;color:#4a3728;font-weight:600;">微信：<span id="shopWechat"></span></p>
+        <p style="font-size:12px;color:#bfa99a;">🍑 添加好友后付款</p>
+      </div></div>
+    </div>
+    <div class="pay-step"><div class="label">STEP ② 转账时备注收件人姓名</div></div>
+    <div class="pay-step"><div class="label">STEP ③ 确认并提交</div></div>
+    <label style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;font-size:14px;color:#8b7355;cursor:pointer;">
+      <input type="checkbox" id="agreePayment" onchange="checkForm()" style="width:18px;height:18px;accent-color:#ff6b4a;">
+      我已添加微信好友并完成付款
+    </label>
+    <button class="submit-btn" id="submitBtn" disabled onclick="submitOrder()">确认提交订单</button>
+    <p style="font-size:12px;color:#bfa99a;margin-top:12px;line-height:1.6;" id="shopNotice"></p>
+  </div>
+
+  <div class="footer">🍑 无锡阳山 · 湖景蜜露 · 甜蜜一夏 🍑</div>
+</div>
+</div>
+
+<!-- ========== 管理后台 ========== -->
+<div id="adminView" style="display:none;">
+<div class="admin-container">
+  <div class="admin-header"><h1>🍑 阳山水蜜桃 · 订单管理</h1><p id="updateTime"></p></div>
+  <div class="stats">
+    <div class="stat-card"><div class="num" id="statOrders">0</div><div class="label">订单总数</div></div>
+    <div class="stat-card"><div class="num" id="statBoxes">0</div><div class="label">总箱数</div></div>
+    <div class="stat-card"><div class="num" id="statRevenue">¥0</div><div class="label">总金额</div></div>
+    <div class="stat-card"><div class="num" id="statShipping">¥0</div><div class="label">总邮费</div></div>
+    <div class="stat-card"><div class="num" id="statProfit">¥0</div><div class="label">预估毛利</div></div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" onclick="loadAdminOrders()">🔄 刷新</button>
+    <button class="btn btn-success" onclick="exportCSV()">📥 导出Excel</button>
+    <button class="btn btn-outline" onclick="location.hash=''">🔗 下单页面</button>
+  </div>
+  <div id="tableContainer"><div class="loading">加载中...</div></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================
+// Supabase 配置
+// ============================================
+const SB_URL = "https://zwixfkrayawfroboplcw.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3aXhma3JheWF3ZnJvYm9wbGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjQ5NTUsImV4cCI6MjA5NjQ0MDk1NX0.kG1z9KRv0D2DXZm6yEgmBatlGgtXOewN43M4xXgZH6M";
+
+async function sbFetch(path, method, body) {
+  const headers = {
+    "apikey": SB_KEY,
+    "Authorization": "Bearer " + SB_KEY,
+    "Content-Type": "application/json",
+    "Prefer": "return=representation"
+  };
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  const resp = await fetch(SB_URL + "/rest/v1/" + path, opts);
+  if (!resp.ok) throw new Error("请求失败: " + resp.status);
+  const data = await resp.json();
+  return data || [];
+}
+
+// ============================================
+// 配置加载
+// ============================================
+const CONFIG = JSON.parse(document.getElementById("config").textContent);
+let selectedSpec = null, quantity = 1;
+
+// 省份映射
+const provinceMap = {};
+CONFIG.shipping.groups.forEach(g => {
+  g.provinces.forEach(p => { provinceMap[p] = { oneBox: g.oneBox, twoBox: g.twoBox }; });
+});
+
+const allProvinces = [
+  "北京","天津","上海","重庆","河北","山西","辽宁","吉林","黑龙江",
+  "江苏","浙江","安徽","福建","江西","山东","河南","湖北","湖南",
+  "广东","海南","四川","贵州","云南","陕西","甘肃","青海",
+  "广西","宁夏","内蒙古","西藏","新疆"
+];
+
+// ============================================
+// 视图切换
+// ============================================
+function showView(view) {
+  document.getElementById("orderView").style.display = view === "order" ? "block" : "none";
+  document.getElementById("adminView").style.display = view === "admin" ? "block" : "none";
+  document.getElementById("mainBody").className = view === "admin" ? "admin-body" : "";
+  if (view === "admin") loadAdminOrders();
+}
+
+// ============================================
+// 下单页面逻辑
+// ============================================
+if (location.hash === "#admin") {
+  showView("admin");
+} else {
+  showView("order");
+  initOrderPage();
+}
+
+window.addEventListener("hashchange", () => {
+  showView(location.hash === "#admin" ? "admin" : "order");
+  if (location.hash !== "#admin") initOrderPage();
+});
+
+function initOrderPage() {
+  // 省份下拉
+  const sel = document.getElementById("province");
+  sel.innerHTML = '<option value="">请选择省份</option>';
+  allProvinces.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p;
+    if (provinceMap[p]) {
+      opt.textContent = p;
+    } else {
+      opt.textContent = p + "（暂不发货）";
+      opt.disabled = true;
+      opt.style.color = "#ccc";
+    }
+    sel.appendChild(opt);
+  });
+
+  // 规格列表
+  document.getElementById("specList").innerHTML = "";
+  CONFIG.specs.forEach((spec, i) => {
+    const div = document.createElement("div");
+    div.className = "spec-item";
+    div.onclick = () => {
+      selectedSpec = CONFIG.specs[i];
+      document.querySelectorAll(".spec-item").forEach((el, j) => el.classList.toggle("active", j === i));
+      updateSummary(); checkForm();
+    };
+    div.innerHTML = `<div class="radio"></div><div class="spec-info"><div class="name">${spec.name}</div><div class="desc">${spec.weight}</div></div><div class="spec-price">¥${spec.price} <small>/箱</small></div>`;
+    document.getElementById("specList").appendChild(div);
+  });
+
+  document.getElementById("shopWechat").textContent = CONFIG.shop.wechat;
+  document.getElementById("shopNotice").textContent = CONFIG.shop.notice;
+  updateSummary();
+}
+
+function changeQty(d) { quantity = Math.max(1, Math.min(99, quantity + d)); document.getElementById("qtyInput").value = quantity; updateSummary(); checkForm(); }
+function updateShipping() { updateSummary(); checkForm(); }
+
+function calcShipping(province, totalBoxes) {
+  if (!province || !provinceMap[province]) return { shipping: 0, packages: 0, unavailable: true };
+  const { oneBox, twoBox } = provinceMap[province];
+  const twoPackages = Math.floor(totalBoxes / 2);
+  const onePackage = totalBoxes % 2;
+  return { shipping: twoPackages * twoBox + onePackage * oneBox, packages: twoPackages + onePackage, unavailable: false };
+}
+
+function updateSummary() {
+  const province = document.getElementById("province").value;
+  const peachTotal = selectedSpec ? selectedSpec.price * quantity : 0;
+  const sr = (province && provinceMap[province]) ? calcShipping(province, quantity) : { shipping: 0, packages: 0, unavailable: !province };
+  const grandTotal = peachTotal + sr.shipping;
+
+  document.getElementById("feeSpec").textContent = selectedSpec ? `${selectedSpec.name} × ${quantity}箱 (¥${selectedSpec.price}/箱)` : "请先选择规格";
+  document.getElementById("feePeach").textContent = "¥" + peachTotal;
+  document.getElementById("feeShipping").textContent = province ? (sr.unavailable ? "暂不发货" : "¥" + sr.shipping) : "请选择省份";
+  document.getElementById("feePackages").textContent = province ? (sr.unavailable ? "—" : sr.packages + "单") : "—";
+  document.getElementById("feeTotal").textContent = "¥" + grandTotal;
+}
+
+function checkForm() {
+  const valid = selectedSpec && quantity > 0 &&
+    document.getElementById("name").value.trim() &&
+    document.getElementById("phone").value.trim() &&
+    document.getElementById("province").value &&
+    provinceMap[document.getElementById("province").value] &&
+    document.getElementById("address").value.trim() &&
+    document.getElementById("agreePayment").checked;
+  document.getElementById("submitBtn").disabled = !valid;
+}
+
+["name","phone","address"].forEach(id => {
+  document.getElementById(id).addEventListener("input", checkForm);
+});
+
+async function submitOrder() {
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true; btn.textContent = "提交中...";
+
+  const province = document.getElementById("province").value;
+  const sr = calcShipping(province, quantity);
+  const peachTotal = selectedSpec.price * quantity;
+
+  const order = {
+    spec: selectedSpec.name,
+    price_per_box: selectedSpec.price,
+    quantity: quantity,
+    peach_total: peachTotal,
+    province: province,
+    city: document.getElementById("city").value.trim(),
+    address: document.getElementById("address").value.trim(),
+    shipping: sr.shipping,
+    packages: sr.packages,
+    total: peachTotal + sr.shipping,
+    customer_name: document.getElementById("name").value.trim(),
+    customer_phone: document.getElementById("phone").value.trim()
+  };
+
+  try {
+    await sbFetch("orders", "POST", order);
+    showToast("✅ 订单提交成功！请确认已微信付款～");
+    btn.textContent = "提交成功 ✓";
+    setTimeout(() => { btn.textContent = "确认提交订单"; btn.disabled = false; }, 3000);
+  } catch (e) {
+    showToast("❌ 提交失败，请检查网络后重试");
+    btn.textContent = "确认提交订单"; btn.disabled = false;
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+// ============================================
+// 管理后台逻辑
+// ============================================
+async function loadAdminOrders() {
+  document.getElementById("updateTime").textContent = "更新中...";
+  try {
+    const orders = await sbFetch("orders?select=*&order=id.desc", "GET");
+
+    if (!orders || orders.length === 0) {
+      document.getElementById("tableContainer").innerHTML = '<div class="empty">🍑 还没有订单，快把下单链接分享给客户吧！</div>';
+      document.getElementById("statOrders").textContent = "0";
+      document.getElementById("statBoxes").textContent = "0";
+      document.getElementById("statRevenue").textContent = "¥0";
+      document.getElementById("statShipping").textContent = "¥0";
+      document.getElementById("statProfit").textContent = "¥0";
+      document.getElementById("updateTime").textContent = "暂无数据";
+      return;
+    }
+
+    const totalBoxes = orders.reduce((s, o) => s + (o.quantity || 0), 0);
+    const totalRev = orders.reduce((s, o) => s + (o.total || 0), 0);
+    const totalShip = orders.reduce((s, o) => s + (o.shipping || 0), 0);
+    const totalPeach = orders.reduce((s, o) => s + (o.peach_total || 0), 0);
+
+    // 计算预估毛利
+    const specCostMap = {};
+    CONFIG.specs.forEach(s => { specCostMap[s.name] = s.cost; });
+    let totalCost = 0;
+    orders.forEach(o => {
+      const cost = specCostMap[o.spec] || 0;
+      totalCost += cost * (o.quantity || 0);
+    });
+    const profit = totalPeach - totalCost;
+
+    document.getElementById("statOrders").textContent = orders.length;
+    document.getElementById("statBoxes").textContent = totalBoxes;
+    document.getElementById("statRevenue").textContent = "¥" + totalRev.toLocaleString();
+    document.getElementById("statShipping").textContent = "¥" + totalShip.toLocaleString();
+    document.getElementById("statProfit").textContent = "¥" + profit.toLocaleString();
+
+    let html = '<div style="overflow-x:auto;"><table class="admin-table"><thead><tr>';
+    ["编号","时间","规格","数量","桃子¥","省份","邮费","单数","总价","收件人","手机","地址"].forEach(h => {
+      html += "<th>" + h + "</th>";
+    });
+    html += "</tr></thead><tbody>";
+
+    orders.forEach(o => {
+      html += `<tr>
+        <td>${o.id || ""}</td>
+        <td>${(o.created_at || "").substring(0,16)}</td>
+        <td>${o.spec || ""}</td>
+        <td>${o.quantity || 0}</td>
+        <td>¥${o.peach_total || 0}</td>
+        <td>${o.province || ""}</td>
+        <td>¥${o.shipping || 0}</td>
+        <td>${o.packages || 0}</td>
+        <td style="color:#ff6b4a;font-weight:700;">¥${o.total || 0}</td>
+        <td>${o.customer_name || ""}</td>
+        <td>${o.customer_phone || ""}</td>
+        <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${o.address || ""}">${o.address || ""}</td>
+      </tr>`;
+    });
+
+    html += `<tr class="cost-row">
+      <td colspan="3"><b>合计 ${orders.length}单</b></td>
+      <td><b>${totalBoxes}</b></td>
+      <td><b>¥${totalPeach.toLocaleString()}</b></td>
+      <td></td><td><b>¥${totalShip.toLocaleString()}</b></td>
+      <td></td><td><b>¥${totalRev.toLocaleString()}</b></td>
+      <td colspan="3">预估毛利：¥${profit.toLocaleString()}</td>
+    </tr>`;
+    html += "</tbody></table></div>";
+    document.getElementById("tableContainer").innerHTML = html;
+    document.getElementById("updateTime").textContent = "最后更新：" + new Date().toLocaleString("zh-CN");
+  } catch (e) {
+    document.getElementById("tableContainer").innerHTML = '<div class="empty">❌ 加载失败，请刷新重试<br><small>' + e.message + '</small></div>';
+    document.getElementById("updateTime").textContent = "加载失败";
+  }
+}
+
+async function exportCSV() {
+  try {
+    const orders = await sbFetch("orders?select=*&order=id.desc", "GET");
+    let csv = "\uFEFF编号,时间,规格,单价,数量,桃子金额,省份,城市,地址,邮费,快递单数,总价,收件人,手机\n";
+    orders.forEach(o => {
+      csv += [o.id, o.created_at, o.spec, o.price_per_box, o.quantity, o.peach_total,
+              o.province, o.city, o.address, o.shipping, o.packages, o.total,
+              o.customer_name, o.customer_phone].join(",") + "\n";
+    });
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "阳山水蜜桃订单_" + new Date().toISOString().slice(0,10) + ".csv";
+    a.click();
+    showToast("📥 导出成功！");
+  } catch (e) {
+    showToast("❌ 导出失败: " + e.message);
+  }
+}
+
+setInterval(() => {
+  if (location.hash === "#admin") loadAdminOrders();
+}, 30000);
+</script>
+
+</body>
+</html>
