@@ -1,38 +1,30 @@
 """
-Vercel Serverless — CSV导出API
-GET /api/export → 下载订单CSV文件
+Vercel Serverless — CSV导出API (Supabase版)
+GET /api/export → 下载订单CSV
 """
-
-import json
-import os
-import urllib.request
-import csv
-import io
+import json, os, urllib.request, csv, io
 from http.server import BaseHTTPRequestHandler
 
-KV_URL = os.environ.get('KV_REST_API_URL', '')
-KV_TOKEN = os.environ.get('KV_REST_API_TOKEN', '')
-ORDERS_KEY = 'peach_orders'
+SUPABASE_URL = "https://zwixfkrayawfroboplcw.supabase.co"
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3aXhma3JheWF3ZnJvYm9wbGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjQ5NTUsImV4cCI6MjA5NjQ0MDk1NX0.kG1z9KRv0D2DXZm6yEgmBatlGgtXOewN43M4xXgZH6M")
 
-_memory_fallback = []
-
-def kv_get(key):
-    if not KV_URL or not KV_TOKEN:
-        return json.dumps(_memory_fallback) if _memory_fallback else None
-    try:
-        url = f"{KV_URL}/get/{key}"
-        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {KV_TOKEN}"})
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            data = json.loads(resp.read().decode())
-            return data.get('result')
-    except:
-        return None
-
+def supabase_request(method, path):
+    url = f"{SUPABASE_URL}/rest/v1/{path}"
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}"
+    }
+    req = urllib.request.Request(url, method=method, headers=headers)
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        raw = resp.read().decode()
+        return json.loads(raw) if raw else []
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        raw = kv_get(ORDERS_KEY)
-        orders = json.loads(raw) if raw else []
+        try:
+            orders = supabase_request("GET", "orders?select=*&order=id.desc")
+        except:
+            orders = []
 
         output = io.StringIO()
         writer = csv.writer(output)
@@ -51,7 +43,6 @@ class handler(BaseHTTPRequestHandler):
             ])
 
         csv_bytes = output.getvalue().encode('utf-8-sig')
-
         self.send_response(200)
         self.send_header('Content-Type', 'text/csv; charset=utf-8-sig')
         self.send_header('Content-Disposition', 'attachment; filename="orders.csv"')
