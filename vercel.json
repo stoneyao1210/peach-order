@@ -1,4 +1,12 @@
 {
+  "functions": {
+    "api/orders.py": {
+      "maxDuration": 10
+    },
+    "api/export.py": {
+      "maxDuration": 10
+    }
+  },
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" }
   ]
