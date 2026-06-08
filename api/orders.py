@@ -1,57 +1,27 @@
 """
-Vercel Serverless — 订单API
+Vercel Serverless — 订单API (Supabase版)
 GET  /api/orders  → 获取所有订单
 POST /api/orders  → 创建新订单
-存储：Vercel KV Store
-部署后在Vercel Dashboard中创建KV数据库并绑定到此项目
-环境变量：KV_REST_API_URL, KV_REST_API_TOKEN
 """
-
-import json
-import os
-import urllib.request
+import json, os, urllib.request
 from http.server import BaseHTTPRequestHandler
-from datetime import datetime
 
-KV_URL = os.environ.get('KV_REST_API_URL', '')
-KV_TOKEN = os.environ.get('KV_REST_API_TOKEN', '')
-ORDERS_KEY = 'peach_orders'
+SUPABASE_URL = "https://zwixfkrayawfroboplcw.supabase.co"
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3aXhma3JheWF3ZnJvYm9wbGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NjQ5NTUsImV4cCI6MjA5NjQ0MDk1NX0.kG1z9KRv0D2DXZm6yEgmBatlGgtXOewN43M4xXgZH6M")
 
-# 内存兜底（KV不可用时使用，重启会丢失，仅应急）
-_memory_fallback = []
-
-def kv_get(key):
-    if not KV_URL or not KV_TOKEN:
-        return json.dumps(_memory_fallback) if _memory_fallback else None
-    try:
-        url = f"{KV_URL}/get/{key}"
-        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {KV_TOKEN}"})
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            data = json.loads(resp.read().decode())
-            return data.get('result')
-    except Exception as e:
-        print(f"[KV GET ERROR] {e}")
-        return None
-
-def kv_set(key, value):
-    global _memory_fallback
-    if not KV_URL or not KV_TOKEN:
-        _memory_fallback = json.loads(value)
-        return True
-    try:
-        url = f"{KV_URL}/set/{key}"
-        body = json.dumps({"value": value}).encode()
-        req = urllib.request.Request(url, data=body, method='POST', headers={
-            "Authorization": f"Bearer {KV_TOKEN}",
-            "Content-Type": "application/json"
-        })
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            return json.loads(resp.read().decode())
-    except Exception as e:
-        print(f"[KV SET ERROR] {e}")
-        _memory_fallback = json.loads(value)
-        return None
-
+def supabase_request(method, path, body=None):
+    url = f"{SUPABASE_URL}/rest/v1/{path}"
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
+    data = json.dumps(body).encode() if body else None
+    req = urllib.request.Request(url, data=data, method=method, headers=headers)
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        raw = resp.read().decode()
+        return json.loads(raw) if raw else []
 
 class handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
@@ -62,65 +32,46 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-Type', 'application/json; charset=utf-8')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-
-        raw = kv_get(ORDERS_KEY)
-        orders = json.loads(raw) if raw else []
-        self.wfile.write(json.dumps(orders, ensure_ascii=False).encode('utf-8'))
+        try:
+            orders = supabase_request("GET", "orders?select=*&order=id.desc")
+        except Exception as e:
+            orders = []
+        self._json(200, orders)
 
     def do_POST(self):
         content_length = int(self.headers.get('Content-Length', 0))
         body = self.rfile.read(content_length) if content_length > 0 else b'{}'
-
         try:
             data = json.loads(body)
         except:
-            self._json_error(400, "无效的JSON数据")
+            self._json(400, {"error": "无效的JSON数据"})
             return
 
-        required = ['spec', 'pricePerBox', 'quantity', 'peachTotal', 'province',
-                     'address', 'shipping', 'packages', 'total', 'name', 'phone']
-        for f in required:
-            if f not in data:
-                self._json_error(400, f"缺少必填字段: {f}")
-                return
-
-        raw = kv_get(ORDERS_KEY)
-        orders = json.loads(raw) if raw else []
-
-        new_id = (orders[-1]['id'] + 1) if orders else 1
-        order = {
-            "id": new_id,
-            "created_at": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            "spec": data['spec'],
-            "price_per_box": data['pricePerBox'],
-            "quantity": data['quantity'],
-            "peach_total": data['peachTotal'],
-            "province": data['province'],
-            "city": data.get('city', ''),
-            "address": data['address'],
-            "shipping": data['shipping'],
-            "packages": data['packages'],
-            "total": data['total'],
-            "customer_name": data['name'],
-            "customer_phone": data['phone']
+        row = {
+            "spec": data.get("spec",""),
+            "price_per_box": data.get("pricePerBox",0),
+            "quantity": data.get("quantity",0),
+            "peach_total": data.get("peachTotal",0),
+            "province": data.get("province",""),
+            "city": data.get("city",""),
+            "address": data.get("address",""),
+            "shipping": data.get("shipping",0),
+            "packages": data.get("packages",0),
+            "total": data.get("total",0),
+            "customer_name": data.get("name",""),
+            "customer_phone": data.get("phone","")
         }
-        orders.append(order)
-        kv_set(ORDERS_KEY, json.dumps(orders, ensure_ascii=False))
+        try:
+            result = supabase_request("POST", "orders", row)
+            new_id = result[0]["id"] if result else 0
+        except Exception as e:
+            self._json(500, {"error": str(e)})
+            return
+        self._json(201, {"success": True, "id": new_id, "total": data.get("total",0)})
 
-        self.send_response(201)
-        self.send_header('Content-Type', 'application/json; charset=utf-8')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-        self.wfile.write(json.dumps({"success": True, "id": new_id, "total": data['total']},
-                                     ensure_ascii=False).encode('utf-8'))
-
-    def _json_error(self, code, msg):
+    def _json(self, code, data):
         self.send_response(code)
         self.send_header('Content-Type', 'application/json; charset=utf-8')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
-        self.wfile.write(json.dumps({"error": msg}, ensure_ascii=False).encode('utf-8'))
+        self.wfile.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))
